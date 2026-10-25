@@ -1,0 +1,12 @@
+---
+// 막다른 길: 정거장 고리에서 갈라져 아래로 길게 뻗다가 ✕로 끝난다. 세로 경로(rail)는 .trail 이 한 번만 그린다.
+// 가지는 폭에 따라 줄어들지만 선 굵기(non-scaling-stroke)와 ✕(고정 20px)는 그대로다.
+interface Props { branch?: boolean; at?: number; }
+const { branch = false, at = 30 } = Astro.props;
+---
+{branch && (
+  <div class="branch" style={`top:${at}%`} aria-hidden="true">
+    <svg viewBox="0 0 88 160" preserveAspectRatio="none"><path class="dead" pathLength="1" d="M0 0 C 34 6, 60 50, 62 132" /></svg>
+    <span class="xm"></span>
+  </div>
+)}

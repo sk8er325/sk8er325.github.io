@@ -1,0 +1,46 @@
+---
+import '../styles/routes.css';
+interface Props { title: string; description?: string; current?: 'home' | 'notes' | 'about'; }
+const { title, description = '윤시우(Siwoo Youn)의 탐구 기록 — 1차 안을 끝까지 만들고, 무엇이 틀렸는지 적고, 그 한계를 다음 안의 근거로 쓴다.', current } = Astro.props;
+---
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <meta name="theme-color" content="#F4F0E6" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..900&family=IBM+Plex+Sans:wght@400;500;600&family=Noto+Sans+KR:wght@400;500&display=swap" rel="stylesheet" />
+  </head>
+  <body>
+    <svg class="contours" viewBox="0 0 1600 1000" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+      <path d="M-50 200 C 200 120, 400 260, 650 180 S 1100 90, 1650 220"/>
+      <path d="M-50 260 C 220 180, 420 320, 680 240 S 1120 150, 1650 280"/>
+      <path d="M-50 330 C 240 250, 440 390, 700 300 S 1140 210, 1650 350"/>
+      <path d="M-50 420 C 260 340, 470 470, 730 380 S 1170 300, 1650 440"/>
+      <path d="M-50 520 C 280 440, 500 560, 760 470 S 1200 400, 1650 540"/>
+      <path d="M-50 640 C 300 560, 520 680, 790 590 S 1230 520, 1650 660"/>
+      <path d="M-50 760 C 320 680, 540 800, 820 710 S 1260 640, 1650 780"/>
+      <path d="M-50 880 C 340 800, 560 920, 850 830 S 1290 760, 1650 900"/>
+    </svg>
+    <svg width="0" height="0" style="position:absolute" aria-hidden="true">
+      <symbol id="i-x" viewBox="0 0 16 16"><path d="M3 3 L 13 13 M 13 3 L 3 13"/></symbol>
+      <symbol id="i-arrow" viewBox="0 0 16 16"><path d="M2 8 H 14 M 9 3 L 14 8 L 9 13"/></symbol>
+    </svg>
+    <header class="top">
+      <a href="/"><b>Siwoo Youn</b></a>
+      <nav aria-label="map">
+        <a href="/" aria-current={current === 'home' ? 'page' : undefined}>Routes</a>
+        <a href="/notes/" aria-current={current === 'notes' ? 'page' : undefined}>Notes</a>
+        <a href="/about/" aria-current={current === 'about' ? 'page' : undefined}>About</a>
+      </nav>
+      <span class="who">윤시우 · 고등학교 1학년</span>
+    </header>
+    <slot />
+    <footer class="foot"><span>윤시우 · Siwoo Youn · 2026</span></footer>
+  </body>
+</html>

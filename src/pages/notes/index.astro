@@ -1,0 +1,29 @@
+---
+import Map from '../../layouts/Map.astro';
+import { getCollection, render } from 'astro:content';
+const notes = (await getCollection('notes')).sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
+const rendered = await Promise.all(notes.map(async (n) => ({ n, Content: (await render(n)).Content })));
+const fmt = (d: Date) => d.toISOString().slice(0, 10).replace(/-/g, '.');
+---
+<Map title="Notes — Siwoo Youn" current="notes">
+  <section class="hero" style="min-height:0;padding-bottom:0">
+    <h1 class="disp rise" style="font-size:clamp(36px,5.6vw,96px)">Notes</h1>
+    <p class="kr rise">기록 — 읽은 것, 막힌 것, 생각이 바뀐 것. 열 줄 이내.</p>
+  </section>
+  <section class="trail">
+    {rendered.length > 0 && <span class="rail" aria-hidden="true"></span>}
+    {rendered.length === 0 && (
+      <article class="stop small"><div class="lane"></div><div class="body">
+        <h3 class="pin">No entries yet</h3>
+        <p class="kr" style="margin-top:.6em">첫 기록은 일이 움직일 때 올라옵니다.</p>
+      </div></article>
+    )}
+    {rendered.map(({ n, Content }) => (
+      <article class="stop small"><div class="lane"></div><div class="body">
+        <h3 class="pin">{n.data.title}</h3>
+        <p class="status">{fmt(n.data.date)}</p>
+        <div class="prose" style="margin-top:.8em"><Content /></div>
+      </div></article>
+    ))}
+  </section>
+</Map>

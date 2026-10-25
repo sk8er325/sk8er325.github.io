@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
+  <!-- 지도 위의 정거장: 종이 바탕, 주황 경로, 잉크 테두리의 점 -->
+  <rect width="32" height="32" fill="#F4F0E6"/>
+  <path d="M4 26 C 10 22, 12 12, 16 16 S 24 8, 28 6" fill="none" stroke="#D8432B" stroke-width="3" stroke-linecap="round"/>
+  <circle cx="16" cy="16" r="5" fill="#D8432B" stroke="#171512" stroke-width="2"/>
+</svg>

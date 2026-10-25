@@ -1,0 +1,64 @@
+---
+import Map from '../../layouts/Map.astro';
+import Lane from '../../components/Lane.astro';
+import { getCollection, render } from 'astro:content';
+
+export async function getStaticPaths() {
+  const projects = await getCollection('projects');
+  return projects.map((p) => ({ params: { slug: p.id }, props: { p } }));
+}
+const { p } = Astro.props;
+const d = p.data;
+const { Content } = await render(p);
+const STATUS = { boarding: 'In progress', departed: 'Done', cancelled: 'Stopped' } as const;
+const STATUS_KO = { boarding: '진행 중', departed: '완료', cancelled: '중단' } as const;
+const legs = [
+  { mark: '01', icon: '', en: 'First attempt', ko: '1차 안', text: d.attempt, branch: false },
+  { mark: '', icon: 'i-x', en: 'Dead end', ko: '틀린 것', text: d.wrong, branch: true },
+  { mark: '', icon: 'i-arrow', en: 'Next leg', ko: '다음 안의 근거', text: d.next, branch: false },
+].filter((l) => l.text);
+---
+<Map title={`${d.title} — Siwoo Youn`} description={d.summary}>
+  <section class="hero" style="min-height:0;padding-bottom:0">
+    <h1 class="disp rise" style="font-size:clamp(32px,4.6vw,72px)"><span class="num">{String(d.order).padStart(2, '0')}</span> {d.title}</h1>
+    <p class="stop-status rise"><b>{STATUS[d.status]}</b> · {STATUS_KO[d.status]} · {d.stageKo}{d.draft && <span class="draft"> &nbsp;·&nbsp; Draft — 본인 문장으로 다시 쓰기 전</span>}</p>
+    <p class="kr rise">{d.titleKo} — {d.summary}</p>
+  </section>
+
+  <section class="trail" aria-label="this stop">
+    <span class="rail" aria-hidden="true"></span>
+    {legs.map((l) => (
+      <article class="stop small">
+        <div class="lane"><Lane branch={l.branch} /></div>
+        <div class="body">
+          <h3 class="pin">{l.mark && <span class="num">{l.mark}</span>}{l.icon && <svg class="ic" style="margin-right:.4em"><use href={`#${l.icon}`}/></svg>}{l.en} <span class="kr" style="font-size:.55em;font-weight:400;letter-spacing:0;text-transform:none">· {l.ko}</span></h3>
+          <p class="kr" style="font-size:clamp(16px,1.4vw,21px);color:var(--ink);max-width:60ch;margin-top:.7em">{l.text}</p>
+        </div>
+      </article>
+    ))}
+
+    <article class="stop">
+      <div class="lane"></div>
+      <div class="body card">
+        <h3 style="font-size:clamp(20px,2vw,28px);margin-bottom:.9em">Station card <span class="kr" style="font-size:.6em;font-weight:400;letter-spacing:0;text-transform:none">· 명세</span></h3>
+        <dl class="manifest">
+          <dt>Period</dt><dd>{d.period}</dd>
+          <dt>My role</dt><dd>{d.role}</dd>
+          <dt>Tools</dt><dd>{d.tools.join(' · ')}</dd>
+          <dt>Results</dt><dd><ul>{d.results.map((r) => <li>{r}</li>)}</ul></dd>
+          <dt>Limits</dt><dd><ul>{d.limits.map((l) => <li>{l}</li>)}</ul></dd>
+          {d.attachments.length > 0 && <><dt>Files</dt><dd><ul>{d.attachments.map((a) => <li><a href={a.href}>{a.label}</a></li>)}</ul></dd></>}
+        </dl>
+      </div>
+    </article>
+
+    {d.plain && (
+      <article class="stop"><div class="lane"></div><div class="body">
+        <h3 style="font-size:clamp(20px,2vw,28px);margin-bottom:.9em">Plain version <span class="kr" style="font-size:.6em;font-weight:400;letter-spacing:0;text-transform:none">· 빠른 버전</span></h3>
+        <div class="plain">{d.plain.map((l) => <div>{l}</div>)}</div>
+      </div></article>
+    )}
+
+    <article class="stop"><div class="lane"></div><div class="body prose"><Content /></div></article>
+  </section>
+</Map>

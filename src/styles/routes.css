@@ -1,0 +1,130 @@
+/* Routes — 지도 종이 위의 경로. 막다른 길은 지우지 않고 ✕로 남긴다. */
+:root {
+  --paper: #F4F0E6; --contour: #D8D0BC; --ink: #171512; --mute: #6B655A; --route: #D8432B; --route-ink: #A82E1B; --rule: #DDD5C2;   /* route-ink: 작은 글자용, 종이 위 4.5:1 이상 */
+  --disp: "Archivo", system-ui, sans-serif;
+  --sans: "IBM Plex Sans", system-ui, sans-serif;
+  --kr: "Noto Sans KR", "Apple SD Gothic Neo", system-ui, sans-serif;
+  --lane: clamp(56px, 8vw, 96px);
+  --gap: clamp(16px, 3vw, 40px);
+  --gutter: clamp(20px, 4vw, 64px);
+  --max: 1280px;
+  color-scheme: light;
+}
+* { box-sizing: border-box; margin: 0; }
+html { background: var(--paper); scroll-behavior: smooth; }
+body { color: var(--ink); font-family: var(--sans); -webkit-font-smoothing: antialiased; overflow-x: hidden; caret-color: var(--route); }
+::selection { background: var(--route); color: #fff; }
+a { color: inherit; text-decoration: none; }
+:focus-visible { outline: 2px solid var(--route); outline-offset: 4px; }
+
+/* 등고선: 고정 배경. 경로는 그 위를 지난다 */
+.contours { position: fixed; inset: 0; z-index: -1; width: 100%; height: 100%; }
+.contours path { fill: none; stroke: var(--contour); stroke-width: 1; vector-effect: non-scaling-stroke; }
+
+/* 상단 바 */
+.top { display: flex; justify-content: space-between; align-items: center; gap: 16px; padding: 20px var(--gutter); font-size: 12px; letter-spacing: .16em; text-transform: uppercase; color: var(--mute); font-weight: 500; }
+.top b { color: var(--ink); font-weight: 600; }
+.top nav { display: flex; gap: 2.2em; }
+.top nav a[aria-current="page"] { color: var(--ink); }
+.top nav a:hover { color: var(--route); }
+.top .who { font-family: var(--kr); text-transform: none; letter-spacing: 0; font-weight: 400; }
+
+/* 공통 텍스트 */
+.kr { font-family: var(--kr); font-weight: 400; color: var(--mute); line-height: 1.75; word-break: keep-all; }
+.label { font-size: 12px; letter-spacing: .18em; text-transform: uppercase; font-weight: 500; color: var(--mute); }
+.label.route { color: var(--route-ink); }
+.disp { font-family: var(--disp); font-weight: 900; font-stretch: 88%; text-transform: uppercase; letter-spacing: -.03em; line-height: .9; }
+
+/* 아이콘: ✕ 와 → 는 한 벌의 SVG 심볼만 쓴다 */
+.ic { width: 1em; height: 1em; vertical-align: -.12em; fill: none; stroke: currentColor; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; }
+
+/* 히어로 */
+.hero { padding: clamp(24px, 8vh, 96px) var(--gutter) 0; min-height: calc(100vh - 62px); display: grid; align-content: center; max-width: var(--max); margin: 0 auto; width: 100%; }
+.legend { display: flex; flex-wrap: wrap; gap: .6em 1.6em; align-items: center; margin-bottom: 1.6em; color: var(--ink); }
+.legend span { display: inline-flex; align-items: center; gap: .5em; }
+.legend i { display: inline-block; width: 28px; border-top: 3px solid var(--route); vertical-align: middle; margin-right: .6em; }
+.hero h1 { font-size: clamp(46px, 8.4vw, 150px); max-width: 14ch; }
+.hero h1 span:not(.num) { color: var(--route); }
+.hero .kr { font-size: clamp(15px, 1.3vw, 20px); margin-top: 1.4em; max-width: 38em; }
+
+/* 경로: 왼쪽 레인 + 내용. 블록마다 레인 SVG가 위아래로 이어진다 */
+.trail { position: relative; max-width: var(--max); margin: clamp(40px, 8vh, 96px) auto 0; padding: 0 var(--gutter) clamp(80px, 12vh, 160px); }
+.trail .rail { position: absolute; left: calc(var(--gutter) + var(--lane) / 2 - 2.5px); top: clamp(28px, 5vh, 56px); bottom: clamp(80px, 12vh, 160px); width: 5px; background: var(--route); border-radius: 3px; transform-origin: top; }
+.stop { display: grid; grid-template-columns: var(--lane) minmax(0, 1fr); column-gap: var(--gap); position: relative; padding: clamp(28px, 5vh, 56px) 0; }
+.stop .lane { position: absolute; inset: 0 auto 0 0; width: var(--lane); }   /* 블록의 테두리 상자 전체를 덮어 경로가 블록 사이에서 끊기지 않게 */
+.stop .body { grid-column: 2; }
+.stop .lane .branch { position: absolute; left: 50%; width: 88px; height: 160px; overflow: visible; }
+.stop .lane .branch svg { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; }
+.stop .lane .branch path { vector-effect: non-scaling-stroke; }
+/* ✕ 는 크기가 고정된 HTML 마크 — 가지가 줄어도 20px, 3.5px 선을 지킨다 */
+.stop .lane .xm { position: absolute; left: 70%; top: 82.5%; width: 20px; height: 20px; translate: -50% -50%; rotate: 45deg; }
+.stop .lane .xm::before, .stop .lane .xm::after { content: ""; position: absolute; left: 50%; top: 0; width: 3.5px; height: 100%; margin-left: -1.75px; background: var(--ink); border-radius: 2px; }
+.stop .lane .xm::after { rotate: 90deg; }
+.stop .lane .branch path { fill: none; stroke-linecap: round; stroke-linejoin: round; }
+.stop .lane .branch .dead { stroke: var(--route); stroke-width: 5; }
+.pin { position: relative; }
+.pin::before { content: ""; position: absolute; left: calc(-1 * (var(--lane) / 2 + var(--gap))); top: .5em; width: 22px; height: 22px; translate: -50% -50%; border-radius: 50%; background: var(--paper); border: 3px solid var(--ink); z-index: 1; }
+.stop.live .pin::before { background: var(--route); border-color: var(--route); }
+.stop.small .pin::before, .label.pin::before { width: 16px; height: 16px; }
+.stop + .stop .body { border-top: 1px solid var(--rule); padding-top: clamp(20px, 3vh, 32px); }   /* 구분선은 본문 열에만 — 경로를 가로지르지 않는다 */
+.stop .body { min-width: 0; }
+.stop .num { color: var(--ink); margin-right: .35em; }
+.stop .status { margin-top: .9em; font-size: 12px; letter-spacing: .16em; text-transform: uppercase; font-weight: 500; color: var(--mute); }
+.stop .status b { font-weight: 600; color: var(--ink); }
+.stop-status { margin-top: 1em; font-size: 12px; letter-spacing: .16em; text-transform: uppercase; font-weight: 500; color: var(--mute); }
+.stop-status b { font-weight: 600; color: var(--route-ink); }
+.stop.live .status b { color: var(--route-ink); }
+.stop h2, .stop h3 { font-family: var(--disp); font-weight: 900; font-stretch: 88%; text-transform: uppercase; letter-spacing: -.02em; line-height: .95; }
+.stop h2 { font-size: clamp(28px, 3.4vw, 52px); }
+.stop h3 { font-size: clamp(24px, 3vw, 44px); }
+.stop h2 a:hover { color: var(--route); }
+.stop .sub { font-family: var(--kr); word-break: keep-all; font-size: clamp(15px, 1.2vw, 18px); color: var(--mute); margin-top: .8em; line-height: 1.7; max-width: 60ch; }
+.legs { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: clamp(16px, 3vw, 40px); margin-top: clamp(20px, 3vh, 32px); align-items: start; }
+.leg .label { display: flex; align-items: center; gap: .6em; padding-bottom: .6em; border-bottom: 1px solid var(--ink); margin-bottom: .8em; color: var(--ink); }
+.leg .label .mark { font-family: var(--disp); font-weight: 900; font-size: 1.3em; line-height: 1; color: var(--ink); }
+.leg p { font-family: var(--kr); font-size: 15px; line-height: 1.7; color: var(--ink); }
+.stop .more { display: inline-flex; align-items: center; gap: .5em; margin-top: 1.4em; font-size: 12px; letter-spacing: .18em; text-transform: uppercase; font-weight: 500; border-bottom: 2px solid var(--ink); padding-bottom: .3em; }
+.stop .more:hover { color: var(--route); }
+
+/* 상세: 역 카드 */
+.card { border: 1px solid var(--ink); padding: clamp(18px, 2.4vw, 32px); background: rgba(255,255,255,.35); }
+.manifest { display: grid; grid-template-columns: 12ch 1fr; gap: .55em 1.4em; font-size: 15px; line-height: 1.6; }
+.manifest dt { font-size: 11px; letter-spacing: .18em; text-transform: uppercase; color: var(--mute); padding-top: .35em; font-weight: 500; }
+.manifest dd { font-family: var(--kr); }
+.manifest ul { padding-left: 1.1em; }
+.plain { font-family: var(--kr); font-size: 15px; line-height: 1.75; border-top: 1px solid var(--ink); padding-top: .9em; max-width: 60ch; }
+.prose { font-family: var(--kr); line-height: 1.8; max-width: 68ch; font-size: 16px; }
+.prose h2, .prose h3 { font-family: var(--kr); font-weight: 500; font-size: 1.15em; margin: 1.6em 0 .6em; }
+.prose p { margin: 0 0 1em; } .prose ul, .prose ol { margin: 0 0 1em 1.2em; }
+.prose a { text-decoration: underline; text-underline-offset: .2em; text-decoration-color: var(--route); }
+.draft { font-size: 11px; letter-spacing: .18em; text-transform: uppercase; color: var(--route-ink); font-weight: 500; }
+footer.foot { max-width: var(--max); margin: 0 auto; padding: 24px var(--gutter) 40px; border-top: 1px solid var(--rule); display: flex; justify-content: space-between; flex-wrap: wrap; gap: 8px; font-family: var(--kr); font-size: 12px; color: var(--mute); }
+
+/* 스크롤 연출: 지원 브라우저에서만 초기 상태를 숨긴다 — 그려지는 경로, 떠오르는 내용 */
+@supports (animation-timeline: view()) {
+  .trail .rail { scale: 1 0; animation: grow linear both; animation-timeline: view(); animation-range: entry 0% entry 100%; }   /* 끝이 뷰포트 하단에 붙어 자란다 */
+  .stop .lane .branch .dead { stroke-dasharray: 1; stroke-dashoffset: 1; animation: draw linear both; animation-timeline: view(); animation-range: cover 25% cover 50%; }
+  .stop .lane .xm { opacity: 0; animation: appear linear both; animation-timeline: view(); animation-range: cover 45% cover 55%; }
+  .stop .body { opacity: 0; translate: 0 24px; animation: rise linear both; animation-timeline: view(); animation-range: entry 0% entry 35%; }
+}
+@keyframes grow { to { scale: 1 1; } }
+@keyframes draw { to { stroke-dashoffset: 0; } }
+@keyframes rise { to { opacity: 1; translate: none; } }
+@keyframes appear { to { opacity: 1; } }
+@media (prefers-reduced-motion: reduce) {
+  .trail .rail, .stop .lane .branch path, .stop .lane .xm, .stop .body { animation: none !important; scale: none !important; stroke-dashoffset: 0 !important; opacity: 1 !important; translate: none !important; }
+}
+@media (max-width: 900px) {
+  .stop .lane .branch { width: 48px; height: 120px; left: 30%; }   /* ✕ 가 레인 안에 머문다 */
+}
+@media (max-width: 860px) {
+  .legs { grid-template-columns: 1fr; gap: 18px; }
+  .manifest { grid-template-columns: 1fr; }
+  .top nav { gap: 1.4em; }
+}
+@media (max-width: 640px) {
+  .stop .lane .branch { width: 36px; height: 96px; left: 28%; }
+  .top { flex-wrap: wrap; }
+  .top .who { display: none; }
+  .hero h1 { font-size: clamp(40px, 13vw, 80px); }
+}

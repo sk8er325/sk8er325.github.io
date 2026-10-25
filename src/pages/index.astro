@@ -1,0 +1,52 @@
+---
+import Map from '../layouts/Map.astro';
+import Lane from '../components/Lane.astro';
+import { getCollection } from 'astro:content';
+const projects = (await getCollection('projects')).sort((a, b) => a.data.order - b.data.order);
+const STATUS = { boarding: 'In progress', departed: 'Done', cancelled: 'Stopped' } as const;
+const STATUS_KO = { boarding: '진행 중', departed: '완료', cancelled: '중단' } as const;
+const steps = [
+  { n: '01', en: 'First attempt, built to the end', ko: '1차 안을 끝까지 만든다', branch: false },
+  { n: '02', en: 'What went wrong, written down', ko: '무엇이 틀렸는지 적는다', branch: true },
+  { n: '03', en: 'That limit, the basis of the next', ko: '그 한계가 다음 안의 근거가 된다', branch: false },
+];
+---
+<Map title="Siwoo Youn — Routes" current="home">
+  <section class="hero">
+    <p class="legend label rise"><span><i></i>Route taken</span><span><svg class="ic"><use href="#i-x"/></svg>Dead end, kept on the map</span></p>
+    <h1 class="disp rise">What I called a failed attempt became <span>the basis of the next.</span></h1>
+    <p class="kr rise">실패한 시도라고 생각했던 1차 안이, 다음 방향의 근거가 된다.</p>
+  </section>
+
+  <section class="trail" aria-label="method and projects">
+    <span class="rail" aria-hidden="true"></span>
+    {steps.map((s) => (
+      <article class="stop small">
+        <div class="lane"><Lane branch={s.branch} /></div>
+        <div class="body">
+          <h3 class="pin"><span class="num">{s.n}</span>{s.en}</h3>
+          <p class="sub">{s.ko}</p>
+        </div>
+      </article>
+    ))}
+
+    {projects.map((p) => (
+      <article class={`stop ${p.data.status === 'boarding' ? 'live' : p.data.status}`} id={p.id}>
+        <div class="lane"><Lane branch={!!p.data.wrong} at={12} /></div>
+        <div class="body">
+          <h2 class="pin"><a href={`/projects/${p.id}/`}>{p.data.title}</a></h2>
+          <p class="status"><b>{STATUS[p.data.status]}</b> · {STATUS_KO[p.data.status]} · {p.data.stageKo}</p>
+          <p class="sub">{p.data.titleKo} — {p.data.summary}</p>
+          {(p.data.attempt || p.data.wrong || p.data.next) && (
+            <div class="legs">
+              <div class="leg"><p class="label"><span class="mark">01</span>First attempt · 1차 안</p><p>{p.data.attempt}</p></div>
+              <div class="leg dead"><p class="label"><svg class="ic"><use href="#i-x"/></svg>Dead end · 틀린 것</p><p>{p.data.wrong}</p></div>
+              <div class="leg"><p class="label"><svg class="ic"><use href="#i-arrow"/></svg>Next leg · 다음 안의 근거</p><p>{p.data.next}</p></div>
+            </div>
+          )}
+          <a class="more" href={`/projects/${p.id}/`}>Open this stop · 자세히 <svg class="ic"><use href="#i-arrow"/></svg></a>
+        </div>
+      </article>
+    ))}
+  </section>
+</Map>
