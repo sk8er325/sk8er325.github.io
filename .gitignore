@@ -27,3 +27,6 @@ pnpm-debug.log*
 PRODUCT.md
 DESIGN.md
 .impeccable/
+
+# 백업 파일은 저장소 밖(repo_docs/)에 둔다
+*.bak.*

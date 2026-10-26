@@ -1,13 +1,13 @@
 ---
 order: 6
 code: "KENTECH BECCS"
-title: "Carbon removal through BECCS and nitrogen denitrification — KENTECH Kendler"
-titleKo: "KENTECH 켄들러 — BECCS 탄소 제거와 질소 탈질"
+title: "Net carbon removal of rice-straw BECCS, compared with biochar — KENTECH Kendler"
+titleKo: "KENTECH 켄들러 — 볏짚 BECCS 순감축량과 바이오차 비교"
 period: "2026.08 – (KENTECH 켄들러 프로그램)"
 status: boarding
 stage: "REPORT"
-stageKo: "탐구자료 보고서 착수"
-summary: "바이오에너지와 CCUS를 결합한 BECCS의 탄소 제거 원리·전망과 질소 탈질을 주제로 탐구자료 보고서를 쓴다."
+stageKo: "주제 확정 · 보고서 집필 대기"
+summary: "볏짚 BECCS의 순감축량 산정과 바이오차 비교 — 볏짚을 원료로 한 BECCS의 전 과정 순감축량을 산정하고, 같은 볏짚을 바이오차로 쓸 때와 비교한다."
 role: "— 본인이 적는다."
 tools: ["문헌 검토 (BECCS 국/영문 논문)", "보고서 양식"]
 results:
