@@ -92,6 +92,15 @@ a { color: inherit; text-decoration: none; }
 .manifest dt { font-size: 11px; letter-spacing: .18em; text-transform: uppercase; color: var(--mute); padding-top: .35em; font-weight: 500; }
 .manifest dd { font-family: var(--kr); }
 .manifest ul { padding-left: 1.1em; }
+.contact { display: grid; gap: .8em; max-width: 36em; }
+.contact p { color: var(--mute); }
+.contact label { display: grid; gap: .3em; font-size: 13px; color: var(--mute); }
+.contact input, .contact textarea { font: 15px/1.6 var(--kr); color: var(--ink); background: var(--paper); border: 1px solid var(--ink); border-radius: 0; padding: .5em .7em; }
+.contact textarea { resize: vertical; }
+.contact :focus-visible { outline: 2px solid var(--route); outline-offset: 2px; }
+.contact button { justify-self: start; font: 500 13px var(--sans); letter-spacing: .12em; text-transform: uppercase; color: var(--paper); background: var(--ink); border: 0; padding: .8em 1.6em; cursor: pointer; }
+.contact button:hover { background: var(--route-ink); }
+.contact .hp { display: none; }
 .plain { font-family: var(--kr); font-size: 15px; line-height: 1.75; border-top: 1px solid var(--ink); padding-top: .9em; max-width: 60ch; }
 .prose { font-family: var(--kr); line-height: 1.8; max-width: 68ch; font-size: 16px; }
 .prose h2, .prose h3 { font-family: var(--kr); font-weight: 500; font-size: 1.15em; margin: 1.6em 0 .6em; }
